@@ -1,46 +1,28 @@
 import streamlit as st
 import plotly.express as px
 from collections import deque
-from mqtt import MqttReader
-
-def publish_msg():
-    msg = st.session_state["my_msg"]
-    if msg is not None:
-        st.session_state["mqtt_reader"].publish_messages(int(msg))
-        st.session_state["my_msg"] = None
+from modbus import ModbusClient
+from controller import SMT
 
 
-def render_graph():
+def RenderGraph():
 
-    if "my_msg" not in st.session_state:
-        st.session_state["my_msg"] = None
 
-    if "messages" not in st.session_state:
-        st.session_state["messages"] = deque(maxlen=10)
+    if "modbus_client" not in st.session_state:
+        st.session_state["modbus_client"] = ModbusClient()
 
-    if "mqtt_reader" not in st.session_state:
-        st.session_state["mqtt_reader"] = MqttReader()
+    if "smt" not in st.session_state:
+        st.session_state["smt"] = SMT()
     
-    # --- Récupérer nouveaux messages ---
-    new_msgs = st.session_state["mqtt_reader"].get_messages()
-    for v in new_msgs:
-        st.session_state["messages"].append(v)
+    # --- lire à nouveau ---
+    st.session_state.smt.Read()
 
-    Y = list(st.session_state["messages"])
+    Y =  st.session_state.smt.watchdog
     X = list(range(len(Y)))
 
     if not Y:
-        st.write("En attente de messages MQTT …")
+        st.write("Aucune lecture Modbus …")
     else:
-        st.markdown("**Last 10 MQTT values**")
+        st.markdown("**Last 10 Modbus values**")
         fig = px.line(x=X, y=Y, markers=True)
         st.plotly_chart(fig, use_container_width=True)
-
-
-    st.number_input(
-        "Publie un message MQTT",
-        key="my_msg",
-        value=None,
-        placeholder="Tape un nombre...",
-        on_change=publish_msg
-    )
