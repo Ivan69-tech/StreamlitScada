@@ -1,0 +1,29 @@
+version: "3.9"
+
+services:
+  modbus-server:
+    image: modbus-server  # dossier contenant le Dockerfile du serveur Modbus
+    container_name: python-modbus-server
+    ports:
+      - "5502:5502"              # expose Modbus TCP sur l'hôte
+    networks:
+      - bess-network
+    restart: unless-stopped
+
+  streamlit-app:
+    image: my-streamlit-app  # dossier contenant le Dockerfile Streamlit
+    container_name: streamlit-app
+    ports:
+      - "8501:8501"              # expose Streamlit sur l'hôte
+    networks:
+      - bess-network
+    depends_on:
+      - modbus-server
+    environment:
+      - MODBUS_HOST=modbus-server
+      - MODBUS_PORT=5502
+    restart: unless-stopped
+
+networks:
+  bess-network:
+    driver: bridge

@@ -3,7 +3,7 @@ from collections import deque
 import time
 
 class SMT:
-    def __init__(self, host="localhost", port=5502):
+    def __init__(self, host="python-modbus-server", port=5502):
         self.P_kW = deque(maxlen=10)
         self.Q_kVar = deque(maxlen=10)
         self.state = deque(maxlen=10)
