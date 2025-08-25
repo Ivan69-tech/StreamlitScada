@@ -69,7 +69,7 @@ def RenderControl():
 
     with col2 :
         try :
-            soc = st.session_state.smt.soc
+            soc = st.session_state.smt.soc[-1]
             Px = st.session_state.smt.P_kW[-1]
             Qx = st.session_state.smt.Q_kVar[-1]
             centerText(f"State of Charge : {soc}% 🔋")
@@ -85,7 +85,7 @@ def RenderControl():
                 "State": [st.session_state.smt.state[-1]],
                 "P (kW)": [st.session_state.smt.P_kW[-1]/1000],
                 "Q (kVar)": [st.session_state.smt.Q_kVar[-1]/1000],
-                "SOC (%)": [st.session_state.smt.soc],
+                "SOC (%)": [st.session_state.smt.soc[-1]],
             }
 
             df = pd.DataFrame(values)

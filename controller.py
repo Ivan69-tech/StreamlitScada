@@ -8,7 +8,7 @@ class SMT:
         self.Q_kVar = deque(maxlen=10)
         self.state = deque(maxlen=10)
         self.watchdog = deque(maxlen=10)
-        self.soc = 0
+        self.soc = deque(maxlen=10)
         
         self.mc = ModbusClient(host=host, port=port)
         self.connected = False
@@ -34,7 +34,7 @@ class SMT:
         if val_watchdog is not None:
             self.watchdog.append(val_watchdog)
         if val_soc is not None:
-            self.soc = val_soc / 100
+            self.soc.append(val_soc / 100)
         
     
     def Watchdog(self):

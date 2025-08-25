@@ -18,6 +18,7 @@ def RenderLiveGraph():
     state = st.session_state.smt.state
     P = st.session_state.smt.P_kW
     Q = st.session_state.smt.Q_kVar
+    soc = st.session_state.smt.soc
 
     # Création des DataFrames pour Altair
     df_watchdog = pd.DataFrame({"x": range(len(watchdog)), "y": watchdog})
