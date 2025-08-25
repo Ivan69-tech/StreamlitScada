@@ -1,10 +1,12 @@
 import streamlit as st
 import plotly.express as px
+import plotly.graph_objects as go
 from modbus import ModbusClient
 from controller import SMT
 
 
-def RenderSMT():
+
+def RenderLiveGraph():
     col1, col2, col3 = st.columns(3)
 
     if "modbus_client" not in st.session_state:
@@ -12,10 +14,7 @@ def RenderSMT():
 
     if "smt" not in st.session_state:
         st.session_state["smt"] = SMT()
-
-    # --- lire à nouveau ---
-    st.session_state.smt.Read()
-
+    
     watchdog =  st.session_state.smt.watchdog
     state = st.session_state.smt.state
     P = st.session_state.smt.P_kW
@@ -31,7 +30,9 @@ def RenderSMT():
         else:
             st.markdown("**Last 10 watchdog values**")
             fig = px.line(x=X1, y=watchdog, markers=True)
+            fig.update_yaxes(range=[0, 11])
             st.plotly_chart(fig, use_container_width=True, key="watchdog_chart")
+
 
     with col2 :
         if not state:
