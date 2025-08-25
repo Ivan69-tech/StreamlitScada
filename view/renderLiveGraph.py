@@ -3,7 +3,7 @@ import altair as alt
 from modbus import ModbusClient
 from controller import SMT
 import pandas as pd
-
+from view.component.chart import AltChart
 
 def RenderLiveGraph():
     col1, col2, col3 = st.columns(3)
@@ -30,40 +30,24 @@ def RenderLiveGraph():
             st.write("Aucune lecture Modbus …")
         else:
             st.markdown("**Last 10 watchdog values**")
-            chart = alt.Chart(df_watchdog).mark_line(point=True).encode(
-                x="x",
-                y=alt.Y("y", scale=alt.Scale(domain=[0, 11]))
-            )
-            st.altair_chart(chart, use_container_width=True)
-
+            AltChart(df_watchdog,0,11)
+                
     with col2:
         if not state:
             st.write("Aucune lecture Modbus …")
         else:
             st.markdown("**Last 10 State values**")
-            chart = alt.Chart(df_state).mark_line(point=True).encode(
-                x="x",
-                y="y"
-            )
-            st.altair_chart(chart, use_container_width=True)
+            AltChart(df_state)
 
     with col3:
         if not P:
             st.write("Aucune lecture Modbus …")
         else:
             st.markdown("**Last 10 P values**")
-            chart = alt.Chart(df_P).mark_line(point=True).encode(
-                x="x",
-                y="y"
-            )
-            st.altair_chart(chart, use_container_width=True)
-
+            AltChart(df_P)
+            
         if not Q:
             st.write("Aucune lecture Modbus …")
         else:
             st.markdown("**Last 10 Q values**")
-            chart = alt.Chart(df_Q).mark_line(point=True).encode(
-                x="x",
-                y="y"
-            )
-            st.altair_chart(chart, use_container_width=True)
+            AltChart(df_Q)
