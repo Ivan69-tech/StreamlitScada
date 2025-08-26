@@ -7,7 +7,7 @@ services:
     ports:
       - "5502:5502"              # expose Modbus TCP sur l'hôte
     networks:
-      - bess-network
+      - net
     restart: unless-stopped
 
   streamlit-app:
@@ -16,7 +16,7 @@ services:
     ports:
       - "8501:8501"              # expose Streamlit sur l'hôte
     networks:
-      - bess-network
+      - net
     depends_on:
       - modbus-server
     environment:
@@ -25,5 +25,5 @@ services:
     restart: unless-stopped
 
 networks:
-  bess-network:
-    driver: bridge
+  net:
+    external: true
