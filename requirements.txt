@@ -20,10 +20,12 @@ pandas==2.3.2
 pillow==11.3.0
 plotly==6.3.0
 protobuf==6.32.0
+psycopg2-binary==2.9.10
 pyarrow==21.0.0
 pydeck==0.9.1
 pymodbus==3.11.1
 python-dateutil==2.9.0.post0
+python-dotenv==1.1.1
 pytz==2025.2
 referencing==0.36.2
 requests==2.32.5
@@ -39,6 +41,3 @@ typing_extensions==4.14.1
 tzdata==2025.2
 urllib3==2.5.0
 watchdog==6.0.0
-
-# PostgreSQL
-psycopg[binary]==3.2.3
