@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
   modbus-server:
-    image: modbus-server  # dossier contenant le Dockerfile du serveur Modbus
+    image: python-modbus-server  # dossier contenant le Dockerfile du serveur Modbus
     container_name: python-modbus-server
     ports:
       - "5502:5502"              # expose Modbus TCP sur l'hôte
