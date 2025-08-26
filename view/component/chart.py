@@ -8,19 +8,24 @@ def AltChart(df, min=None, max=None, xlabel="x", ylabel="y"):
     else:
         y_encoding = alt.Y(ylabel)
 
+    base = alt.Chart(df)
+    line = base.mark_line(point=True, strokeWidth=2, color="#4f46e5").encode(
+        x=alt.X(xlabel, title=""),
+        y=y_encoding,
+        tooltip=[xlabel, ylabel]
+    )
+
     chart = (
-        alt.Chart(df)
-        .mark_line(point=True)
-        .encode(
-            x=xlabel,
-            y=y_encoding
+        line
+        .configure_view(strokeWidth=0)
+        .configure_axis(
+            grid=True,
+            gridColor="#e5e7eb",
+            labelColor="#334155",
+            titleColor="#0f172a"
         )
-        .configure_view(
-            strokeWidth=0
-        )
-        .properties(
-            padding={"left": 10, "right": 40, "top": 40, "bottom": 10}
-        )
+        .configure_point(size=60, color="#06b6d4")
+        .properties(padding={"left": 10, "right": 16, "top": 10, "bottom": 10})
     )
 
     st.altair_chart(chart, use_container_width=True)

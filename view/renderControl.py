@@ -28,7 +28,6 @@ def setQ():
 
 def RenderControl():
 
-    set_png_as_page_bg('view/images/BESS.png')
 
     col1, col2, col3 = st.columns(3)
 
@@ -42,6 +41,7 @@ def RenderControl():
 
     with col1 :
         with st.container() :
+            st.subheader("Contrôles")
             if st.button("Start Bess", use_container_width=True) :
                 st.session_state["smt"].StartBess()
 
@@ -52,23 +52,24 @@ def RenderControl():
                 st.session_state["smt"].ClearFaults()
 
             st.number_input(
-                "Set Active Power setpoint",
+                "Consigne de puissance active",
                 key="P",
                 value=None,
-                placeholder="Active Power setpoint (W)",
+                placeholder="Active Power (W)",
                 on_change=setP
             )
 
             st.number_input(
-                "Set Reactive Power setpoint",
+                "Consigne de puissance réactive",
                 key="Q",
                 value=None,
-                placeholder="Reactive power setpoint (Var)",
+                placeholder="Reactive power (Var)",
                 on_change=setQ
             )
 
     with col2 :
         try :
+            st.subheader("Statut")
             soc = st.session_state.smt.soc[-1]
             Px = st.session_state.smt.P_kW[-1]
             Qx = st.session_state.smt.Q_kVar[-1]
@@ -80,6 +81,7 @@ def RenderControl():
 
     with col3 :
         try :
+            st.subheader("Lecture instantanée")
             values = {
                 "Watchdog": [st.session_state.smt.watchdog[-1]],
                 "State": [st.session_state.smt.state[-1]],

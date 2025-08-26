@@ -30,25 +30,25 @@ def RenderLiveGraph():
         if not watchdog:
             st.write("Aucune lecture Modbus …")
         else:
-            st.markdown("**Last 10 watchdog values**")
+            st.subheader("Watchdog — 10 dernières valeurs")
             AltChart(df_watchdog,0,11)
                 
     with col2:
         if not state:
             st.write("Aucune lecture Modbus …")
         else:
-            st.markdown("**Last 10 State values**")
+            st.subheader("State — 10 dernières valeurs")
             AltChart(df_state)
 
     with col3:
         if not P:
             st.write("Aucune lecture Modbus …")
         else:
-            st.markdown("**Last 10 P values**")
+            st.subheader("P — 10 dernières valeurs")
             AltChart(df_P)
             
         if not Q:
             st.write("Aucune lecture Modbus …")
         else:
-            st.markdown("**Last 10 Q values**")
+            st.subheader("Q — 10 dernières valeurs")
             AltChart(df_Q)
