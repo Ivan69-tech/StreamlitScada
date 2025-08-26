@@ -1,16 +1,21 @@
 from modbus import ModbusClient
 from collections import deque
 import time
+import os
+import os.path
 
 class SMT:
-    def __init__(self, host="localhost", port=5502):
+    def __init__(self, host=None, port=5502):
+        # Determine host: env var overrides; else detect Docker; fallback to localhost
+        default_host = "python-client-modbus" if os.path.exists("/.dockerenv") else "localhost"
+        resolved_host = os.getenv("MODBUS_HOST", host if host is not None else default_host)
         self.P_kW = deque(maxlen=10)
         self.Q_kVar = deque(maxlen=10)
         self.state = deque(maxlen=10)
         self.watchdog = deque(maxlen=10)
         self.soc = deque(maxlen=10)
         
-        self.mc = ModbusClient(host=host, port=port)
+        self.mc = ModbusClient(host=resolved_host, port=port)
         self.connected = False
 
     def checkConnection(self) :
