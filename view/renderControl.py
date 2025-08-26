@@ -4,7 +4,7 @@ from modbus import ModbusClient
 from controller import SMT
 from view.htmlFunctions.center import centerText
 import pandas as pd
-from view.backgroundImage import set_png_as_page_bg
+from context.context import newContext
 
 
 def setP():
@@ -35,21 +35,21 @@ def RenderControl():
         st.session_state["modbus_client"] = ModbusClient()
 
     if "smt" not in st.session_state:
-        st.session_state["smt"] = SMT()
+        st.session_state["smt"] = SMT(newContext())
 
-    st.session_state["smt"].checkConnection()
+    st.session_state["smt"].check_connection()
 
     with col1 :
         with st.container() :
             centerText("Contrôles")
             if st.button("Start Bess", use_container_width=True) :
-                st.session_state["smt"].StartBess()
+                st.session_state["smt"].start_bess()
 
             if st.button("Stop Bess", use_container_width=True) :
-                st.session_state["smt"].ShutDownBess()
+                st.session_state["smt"].shutdown_bess()
 
             if st.button("Clear Faults", use_container_width=True) :
-                st.session_state["smt"].ClearFaults()
+                st.session_state["smt"].clear_faults()
 
             centerText("Consigne de puissance active")
             st.number_input(

@@ -4,11 +4,12 @@ from view.publish_cycle import publish_cycle
 from view.render_title import render_title
 from view.renderLiveGraph import RenderLiveGraph
 from view.renderControl import RenderControl
+from view.renderHistorical import renderHistorical
 from view.htmlFunctions.bandeau import set_bandeau
 from view.htmlFunctions.generalStyle import generalStyle
-import plotly.express as px
-from controller import SMT
+from dotenv import load_dotenv
 
+load_dotenv()
 
 
 
@@ -24,13 +25,14 @@ publish_cycle()
 # --- handle title ---
 render_title()
 
+
 # --- lire à chaque cycle ---
-st.session_state.smt.checkConnection()
-st.session_state.smt.Read()
+st.session_state.smt.check_connection()
+st.session_state.smt.read()
 
 set_bandeau("view/images/BESS.png")
 # --- handle graph ---
-tab1, tab2 = st.tabs(["⚙️ Commandes", "📊 Graphiques temps réel"])
+tab1, tab2, tab3 = st.tabs(["⚙️ Commandes", "📊 Graphiques temps réel", "📈 Historique des mesures"])
 
 with tab1:
     if not st.session_state.smt.connected :
@@ -43,6 +45,10 @@ with tab2:
         st.markdown("**Connexion avec le serveur modbus impossible**")
     else :
         RenderLiveGraph()
+
+with tab3:
+    
+    renderHistorical(st.session_state.smt.db, st.session_state.smt.context.context)
 
 
 
