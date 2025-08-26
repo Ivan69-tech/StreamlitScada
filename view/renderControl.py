@@ -41,7 +41,7 @@ def RenderControl():
 
     with col1 :
         with st.container() :
-            st.subheader("Contrôles")
+            centerText("Contrôles")
             if st.button("Start Bess", use_container_width=True) :
                 st.session_state["smt"].StartBess()
 
@@ -51,16 +51,18 @@ def RenderControl():
             if st.button("Clear Faults", use_container_width=True) :
                 st.session_state["smt"].ClearFaults()
 
+            centerText("Consigne de puissance active")
             st.number_input(
-                "Consigne de puissance active",
+                "   ",
                 key="P",
                 value=None,
                 placeholder="Active Power (W)",
                 on_change=setP
             )
 
+            centerText("Consigne de puissance réactive")
             st.number_input(
-                "Consigne de puissance réactive",
+                "   ",
                 key="Q",
                 value=None,
                 placeholder="Reactive power (Var)",
@@ -69,7 +71,7 @@ def RenderControl():
 
     with col2 :
         try :
-            st.subheader("Statut")
+            centerText("Statut")
             soc = st.session_state.smt.soc[-1]
             Px = st.session_state.smt.P_kW[-1]
             Qx = st.session_state.smt.Q_kVar[-1]
@@ -81,7 +83,7 @@ def RenderControl():
 
     with col3 :
         try :
-            st.subheader("Lecture instantanée")
+            centerText("Lecture instantanée")
             values = {
                 "Watchdog": [st.session_state.smt.watchdog[-1]],
                 "State": [st.session_state.smt.state[-1]],

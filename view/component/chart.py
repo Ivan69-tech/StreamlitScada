@@ -4,15 +4,15 @@ import altair as alt
 def AltChart(df, min=None, max=None, xlabel="x", ylabel="y"):
 
     if min is not None and max is not None:
-        y_encoding = alt.Y(ylabel, scale=alt.Scale(domain=[min, max]))
+        y_encoding = alt.Y("y", scale=alt.Scale(domain=[min, max]), title=ylabel)
     else:
-        y_encoding = alt.Y(ylabel)
+        y_encoding = alt.Y("y", title=ylabel)
 
     base = alt.Chart(df)
     line = base.mark_line(point=True, strokeWidth=2, color="#4f46e5").encode(
-        x=alt.X(xlabel, title=""),
+        x=alt.X("x", title=xlabel),
         y=y_encoding,
-        tooltip=[xlabel, ylabel]
+        tooltip=[alt.Tooltip("x", title=xlabel), alt.Tooltip("y", title=ylabel)]
     )
 
     chart = (
@@ -25,7 +25,7 @@ def AltChart(df, min=None, max=None, xlabel="x", ylabel="y"):
             titleColor="#0f172a"
         )
         .configure_point(size=60, color="#06b6d4")
-        .properties(padding={"left": 10, "right": 16, "top": 10, "bottom": 10})
+        .properties(padding={"left": 20, "right": 20, "top": 20, "bottom": 20})
     )
 
     st.altair_chart(chart, use_container_width=True)

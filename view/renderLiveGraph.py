@@ -4,6 +4,7 @@ from modbus import ModbusClient
 from controller import SMT
 import pandas as pd
 from view.component.chart import AltChart
+from view.htmlFunctions.center import centerText
 
 def RenderLiveGraph():
     col1, col2, col3 = st.columns(3)
@@ -30,25 +31,27 @@ def RenderLiveGraph():
         if not watchdog:
             st.write("Aucune lecture Modbus …")
         else:
-            st.subheader("Watchdog — 10 dernières valeurs")
-            AltChart(df_watchdog,0,11)
+            centerText("Watchdog — 10 dernières valeurs")
+            AltChart(df_watchdog,0,11, xlabel="X", ylabel="Watchdog value")
                 
     with col2:
         if not state:
             st.write("Aucune lecture Modbus …")
         else:
-            st.subheader("State — 10 dernières valeurs")
-            AltChart(df_state)
+            centerText("State — 10 dernières valeurs")
+            AltChart(df_state, xlabel="X", ylabel="State")
+
+        if not Q:
+            st.write("Aucune lecture Modbus …")
+        else:
+            centerText("Q — 10 dernières valeurs")
+            AltChart(df_Q, xlabel="X", ylabel="Q value (Var)")
 
     with col3:
         if not P:
             st.write("Aucune lecture Modbus …")
         else:
-            st.subheader("P — 10 dernières valeurs")
-            AltChart(df_P)
+            centerText("P — 10 dernières valeurs")
+            AltChart(df_P, xlabel="X", ylabel="P value (W)")
             
-        if not Q:
-            st.write("Aucune lecture Modbus …")
-        else:
-            st.subheader("Q — 10 dernières valeurs")
-            AltChart(df_Q)
+        
