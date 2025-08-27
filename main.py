@@ -27,7 +27,6 @@ st_autorefresh(interval=1000, limit=None, key="count")
 
 generalStyle()
 
-
 # --- handle title ---
 render_title()
 
@@ -44,8 +43,9 @@ try:
     st.session_state.smt.check_db_connection()
     st.session_state.smt.read()
     st.session_state.smt.watchdog_cycle()
-except Exception:
-    pass
+except Exception as e:
+    st.error(f"Erreur lors de l'exécution du cycle : {str(e)}")
+    print(f"Erreur cycle: {e}")
 
 set_bandeau("view/images/BESS.png")
 # --- handle graph ---
