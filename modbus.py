@@ -6,11 +6,30 @@ import time
 class ModbusClient:
     def __init__(self, host="localhost", port=5502):
         """
-        Initialise le client Modbus TCP et tente de se reconnecter toutes les 10s si échec
+        Initialise le client Modbus TCP.
         """
         self.host = host
         self.port = port
-        self.client = ModbusTcpClient(host=host, port=port)
+        # Low timeouts to avoid UI blocking
+        self.client = ModbusTcpClient(host=host, port=port, timeout=1)
+
+    def connect(self) -> bool:
+        try:
+            if self.client is None:
+                self.client = ModbusTcpClient(host=self.host, port=self.port, timeout=1)
+            return bool(self.client.connect())
+        except Exception:
+            return False
+
+    def ensure_connected(self) -> bool:
+        if self.client is None:
+            return self.connect()
+        try:
+            if not self.client.connected:
+                return self.connect()
+            return True
+        except Exception:
+            return self.connect()
 
         
     # --- Lecture ---
@@ -18,6 +37,7 @@ class ModbusClient:
         if self.client is None:
             return None
         try:
+            self.ensure_connected()
             result = self.client.read_coils(address, count, device_id=device_id)
             if not result.isError():
                 return result.bits
@@ -32,6 +52,7 @@ class ModbusClient:
         if self.client is None:
             return None
         try:
+            self.ensure_connected()
             result = self.client.read_discrete_inputs(address, count, device_id=device_id)
             if not result.isError():
                 return result.bits
@@ -46,6 +67,7 @@ class ModbusClient:
         if self.client is None:
             return None
         try:
+            self.ensure_connected()
             result = self.client.read_holding_registers(address, count, device_id=device_id)
             if not result.isError():
                 return result.registers
@@ -60,6 +82,7 @@ class ModbusClient:
         if self.client is None:
             return None
         try:
+            self.ensure_connected()
             result = self.client.read_input_registers(address, count, device_id=device_id)
             if not result.isError():
                 return result.registers
@@ -75,6 +98,7 @@ class ModbusClient:
         if self.client is None:
             return False
         try:
+            self.ensure_connected()
             result = self.client.write_coil(address, value, device_id=device_id)
             return not result.isError()
         except Exception as e:
@@ -85,6 +109,7 @@ class ModbusClient:
         if self.client is None:
             return False
         try:
+            self.ensure_connected()
             result = self.client.write_register(address, value, device_id=device_id)
             return not result.isError()
         except Exception as e:
@@ -107,6 +132,7 @@ class ModbusClient:
         if self.client is None:
             return None
         try:
+            self.ensure_connected()
             response = self.client.read_holding_registers(address, count=2, device_id=device_id)
             if response.isError():
                 return None
@@ -121,6 +147,7 @@ class ModbusClient:
         if self.client is None:
             return None
         try:
+            self.ensure_connected()
             response = self.client.read_holding_registers(address, count=2, device_id=device_id)
             if response.isError():
                 return None
@@ -135,6 +162,7 @@ class ModbusClient:
         if self.client is None:
             return None
         try:
+            self.ensure_connected()
             response = self.client.read_input_registers(address, count=2, device_id=device_id)
             if response.isError():
                 return None
@@ -149,6 +177,7 @@ class ModbusClient:
         if self.client is None:
             return None
         try:
+            self.ensure_connected()
             response = self.client.read_input_registers(address, count=2, device_id=device_id)
             if response.isError():
                 return None
@@ -163,6 +192,7 @@ class ModbusClient:
         if self.client is None:
             return False
         try:
+            self.ensure_connected()
             hi, lo = struct.unpack(">HH", struct.pack(">i", value))
             return self.client.write_registers(address, [hi, lo], device_id=device_id)
         except Exception as e:
@@ -173,6 +203,7 @@ class ModbusClient:
         if self.client is None:
             return False
         try:
+            self.ensure_connected()
             hi, lo = struct.unpack(">HH", struct.pack(">I", value))
             return self.client.write_registers(address, [hi, lo], device_id=device_id)
         except Exception as e:

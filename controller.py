@@ -43,11 +43,20 @@ class SMT:
         
 
     def check_connection(self):
-        self.connected = self.mc.client.connect()
+        """Vérifie et rétablit la connexion Modbus sans bloquer."""
+        try:
+            self.connected = self.mc.connect()
+        except Exception:
+            self.connected = False
     
     def check_db_connection(self):
-        self.db_connected = self.db.is_connected()
-        print(self.db_connected)
+        try:
+            self.db_connected = self.db.is_connected()
+            if not self.db_connected:
+                self.db.connect()
+                self.db_connected = self.db.is_connected()
+        except Exception:
+            self.db_connected = False
 
     def read(self):
         """Lit les valeurs Modbus et met à jour les deque + contexte"""
@@ -74,17 +83,20 @@ class SMT:
             self.soc.append(soc_value)
             self.context.add("soc", soc_value)
 
-        if self.db_connected :
+        if self.db_connected:
             self.save_context()
 
     def watchdog_cycle(self):
         """Cycle d’écriture automatique sur watchdog"""
         a = 0
         while True:
-            self.mc.write_int32(0xd000, a)
-            a += 1
-            if a > 10 :
-                a = 0
+            try:
+                self.mc.write_int32(0xd000, a)
+                a += 1
+                if a > 10:
+                    a = 0
+            except Exception:
+                pass
             time.sleep(1)
 
     def start_bess(self):

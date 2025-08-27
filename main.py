@@ -26,10 +26,13 @@ publish_cycle()
 render_title()
 
 
-# --- lire à chaque cycle ---
-st.session_state.smt.check_connection()
-st.session_state.smt.check_db_connection()
-st.session_state.smt.read()
+# --- lire à chaque cycle (protégé) ---
+try:
+    st.session_state.smt.check_connection()
+    st.session_state.smt.check_db_connection()
+    st.session_state.smt.read()
+except Exception:
+    pass
 
 set_bandeau("view/images/BESS.png")
 # --- handle graph ---

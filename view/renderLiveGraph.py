@@ -5,6 +5,7 @@ from controller import SMT
 import pandas as pd
 from view.component.chart import AltChart
 from view.htmlFunctions.center import centerText
+from context.context import newContext
 
 def RenderLiveGraph():
     col1, col2, col3 = st.columns(3)
@@ -13,7 +14,8 @@ def RenderLiveGraph():
         st.session_state["modbus_client"] = ModbusClient()
 
     if "smt" not in st.session_state:
-        st.session_state["smt"] = SMT()
+        # Ensure context is provided consistently
+        st.session_state["smt"] = SMT(newContext())
     
     watchdog =  st.session_state.smt.watchdog
     state = st.session_state.smt.state
