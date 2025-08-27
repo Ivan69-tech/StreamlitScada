@@ -23,6 +23,23 @@ services:
       - MODBUS_HOST=modbus-server
       - MODBUS_PORT=5502
     restart: unless-stopped
+  
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: mydb
+    ports:
+      - "5432:5432"
+    networks:
+      - net
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    command: postgres -c wal_level=logical -c max_replication_slots=4 -c max_wal_senders=4 -c listen_addresses='*'
+
 
 networks:
   net:
