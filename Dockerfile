@@ -16,4 +16,7 @@ EXPOSE 8501
 ENV STREAMLIT_SERVER_MAX_UPLOAD_SIZE=200
 ENV STREAMLIT_SERVER_MAX_MESSAGE_SIZE=200
 
-CMD ["streamlit", "run", "main.py", "--server.address", "0.0.0.0", "--server.port", "8501", "--server.maxUploadSize", "50"]
+CMD ["streamlit", "run", "main.py", \
+    "--server.address", "0.0.0.0", \
+    "--server.port", "8501", \
+    "--logger.level", "debug"]
