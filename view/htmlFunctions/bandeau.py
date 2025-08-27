@@ -55,6 +55,7 @@ def set_bandeau(png_file):
             <h1>Dashboard de contrôle BESS — temps réel</h1>
             <p>Un serveur Modbus tourne en arrière-plan pour simuler un BESS.</p>
             <p>Ce dashboard inclut un client Modbus (un client MQTT aurait aussi été possible).</p>
+            <p>Une base de données Postgresql est intégrée pour tracer l'historique des données.</p>
         </div>
         """,
         unsafe_allow_html=True

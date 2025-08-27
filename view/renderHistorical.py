@@ -80,7 +80,7 @@ def renderHistorical(db, context):
             .encode(
                 x=alt.X(
                     "timestamp:T",
-                    axis=alt.Axis(format="%Hh%M")  # Format 24h : ex. "22h00"
+                    axis=alt.Axis(format="%Hh%M%S")  # Format 24h : ex. "22h00"
                 ),
                 y=alt.Y(
                     f"{st.session_state.variable}:Q",
