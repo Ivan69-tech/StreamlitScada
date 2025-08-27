@@ -10,6 +10,12 @@ from view.htmlFunctions.generalStyle import generalStyle
 from dotenv import load_dotenv
 from context.context import newContext
 from controller import SMT
+from datetime import datetime
+
+
+
+
+
 
 load_dotenv()
 
@@ -25,6 +31,8 @@ generalStyle()
 # --- handle title ---
 render_title()
 
+
+print(datetime.now())
 
 if "smt" not in st.session_state:
         st.session_state["smt"] = SMT(newContext())
