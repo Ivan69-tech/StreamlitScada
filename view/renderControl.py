@@ -13,7 +13,7 @@ def setP():
 
     P = st.session_state["P"]
     if P is not None:
-        st.session_state["smt"].Set_P(int(P))
+        st.session_state["smt"].set_P(int(P))
         st.session_state["P"] = None
 
 def setQ():
@@ -22,7 +22,7 @@ def setQ():
 
     Q = st.session_state["Q"]
     if Q is not None:
-        st.session_state["smt"].Set_Q(int(Q))
+        st.session_state["smt"].set_Q(int(Q))
         st.session_state["Q"] = None
 
 
