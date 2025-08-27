@@ -30,7 +30,7 @@ class SMT:
             port=os.getenv("DB_PORT")
         )
 
-
+        print(os.getenv("DB_HOST"))
         self.db.connect()
         self.create_table()
 
