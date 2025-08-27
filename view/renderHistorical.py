@@ -27,8 +27,6 @@ def renderHistorical(db, context):
         key="variable"
     )
 
-    print(list(context.keys()))
-
     # --- Sélecteurs de dates ---
     col1, col2 = st.columns(2)
     with col1:
@@ -65,7 +63,6 @@ def renderHistorical(db, context):
             return
 
         df = pd.DataFrame(rows, columns=["timestamp", st.session_state.variable])
-        print(df)
         # Conversion UTC -> Europe/Paris pour affichage
         df["timestamp"] = (
             pd.to_datetime(df["timestamp"], utc=True)
@@ -77,11 +74,26 @@ def renderHistorical(db, context):
             alt.Chart(df)
             .mark_line(point=True)
             .encode(
-                x="timestamp:T",
-                y=alt.Y(f"{st.session_state.variable}:Q", title=st.session_state.variable),
+                x=alt.X(
+                    "timestamp:T",
+                    axis=alt.Axis(format="%Hh%M")  # Format 24h : ex. "22h00"
+                ),
+                y=alt.Y(
+                    f"{st.session_state.variable}:Q",
+                    title=st.session_state.variable
+                ),
                 tooltip=["timestamp:T", f"{st.session_state.variable}:Q"]
             )
-            .properties(width=700, height=400, title=f"Évolution de {st.session_state.variable}")
+            .properties(
+                width=700,
+                height=400,
+                title=f"Évolution de {st.session_state.variable}",
+                background="white"
+            )
+            .configure_view(
+                strokeWidth=0, 
+                fill="white"         # <- fond de la zone de tracé
+            )
         )
 
         st.altair_chart(chart, use_container_width=True)

@@ -25,7 +25,11 @@ def AltChart(df, min=None, max=None, xlabel="x", ylabel="y"):
             titleColor="#0f172a"
         )
         .configure_point(size=60, color="#06b6d4")
-        .properties(padding={"left": 20, "right": 20, "top": 20, "bottom": 20})
+        .properties(padding={"left": 10, "right": 10, "top": 10, "bottom": 10}, background="white")
+        .configure_view(
+            strokeWidth=0, 
+            fill="white"         # <- fond de la zone de tracé
+        )
     )
 
     st.altair_chart(chart, use_container_width=True)
