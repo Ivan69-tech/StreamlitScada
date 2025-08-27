@@ -8,6 +8,8 @@ from view.renderHistorical import renderHistorical
 from view.htmlFunctions.bandeau import set_bandeau
 from view.htmlFunctions.generalStyle import generalStyle
 from dotenv import load_dotenv
+from context.context import newContext
+from controller import SMT
 
 load_dotenv()
 
@@ -19,11 +21,13 @@ st_autorefresh(interval=1000, limit=None, key="count")
 
 generalStyle()
 
-# --- thread for watchdog ---
-publish_cycle()
 
 # --- handle title ---
 render_title()
+
+
+if "smt" not in st.session_state:
+        st.session_state["smt"] = SMT(newContext())
 
 
 # --- lire à chaque cycle (protégé) ---
@@ -31,6 +35,7 @@ try:
     st.session_state.smt.check_connection()
     st.session_state.smt.check_db_connection()
     st.session_state.smt.read()
+    st.session_state.smt.watchdog_cycle()
 except Exception:
     pass
 

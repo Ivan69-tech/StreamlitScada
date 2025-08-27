@@ -12,6 +12,8 @@ class SMT:
         default_host = "python-client-modbus" if os.path.exists("/.dockerenv") else "localhost"
         resolved_host = os.getenv("MODBUS_HOST", host if host is not None else default_host)
 
+        self.tick = 0
+
         # historiques des mesures
         self.P_kW = deque(maxlen=10)
         self.Q_kVar = deque(maxlen=10)
@@ -34,10 +36,7 @@ class SMT:
         )
 
         print(os.getenv("DB_HOST"))
-        
-        if self.db_connected :
-            self.create_table()
-
+            
         # Connexion Modbus
         self.mc = ModbusClient(host=resolved_host, port=port)
         
@@ -55,6 +54,7 @@ class SMT:
             if not self.db_connected:
                 self.db.connect()
                 self.db_connected = self.db.is_connected()
+                self.create_table()
         except Exception:
             self.db_connected = False
 
@@ -88,16 +88,13 @@ class SMT:
 
     def watchdog_cycle(self):
         """Cycle d’écriture automatique sur watchdog"""
-        a = 0
-        while True:
-            try:
-                self.mc.write_int32(0xd000, a)
-                a += 1
-                if a > 10:
-                    a = 0
-            except Exception:
-                pass
-            time.sleep(1)
+        try:
+            self.mc.write_int32(0xd000, self.tick)
+            self.tick += 1
+            if self.tick > 10:
+                self.tick = 0
+        except Exception:
+            pass
 
     def start_bess(self):
         self.mc.write_uint32(0xd002, 4)
