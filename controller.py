@@ -21,6 +21,9 @@ class SMT:
 
         self.context = context  # dictionnaire partagé
 
+        self.connected = False
+        self.db_connected = False
+
         # Connexion DB
         self.db = PostgresDB(
             host=os.getenv("DB_HOST"),
@@ -31,15 +34,20 @@ class SMT:
         )
 
         print(os.getenv("DB_HOST"))
-        self.db.connect()
-        self.create_table()
+        
+        if self.db_connected :
+            self.create_table()
 
         # Connexion Modbus
         self.mc = ModbusClient(host=resolved_host, port=port)
-        self.connected = False
+        
 
     def check_connection(self):
         self.connected = self.mc.client.connect()
+    
+    def check_db_connection(self):
+        self.db_connected = self.db.is_connected()
+        print(self.db_connected)
 
     def read(self):
         """Lit les valeurs Modbus et met à jour les deque + contexte"""
@@ -66,7 +74,8 @@ class SMT:
             self.soc.append(soc_value)
             self.context.add("soc", soc_value)
 
-        self.save_context()
+        if self.db_connected :
+            self.save_context()
 
     def watchdog_cycle(self):
         """Cycle d’écriture automatique sur watchdog"""

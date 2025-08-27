@@ -28,6 +28,7 @@ render_title()
 
 # --- lire à chaque cycle ---
 st.session_state.smt.check_connection()
+st.session_state.smt.check_db_connection()
 st.session_state.smt.read()
 
 set_bandeau("view/images/BESS.png")
@@ -47,8 +48,11 @@ with tab2:
         RenderLiveGraph()
 
 with tab3:
-    
-    renderHistorical(st.session_state.smt.db, st.session_state.smt.context.context)
+    if not st.session_state.smt.db_connected :
+        st.markdown("**Connexion avec la base de donnée impossible**")
+        st.session_state.smt.db.connect()
+    else :
+        renderHistorical(st.session_state.smt.db, st.session_state.smt.context.context)
 
 
 

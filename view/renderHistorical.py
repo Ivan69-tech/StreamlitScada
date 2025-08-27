@@ -3,9 +3,10 @@ import pandas as pd
 import altair as alt
 from datetime import datetime, timedelta
 import pytz
+from view.htmlFunctions.center import centerText
 
 def renderHistorical(db, context):
-    st.subheader("📈 Historique des mesures")
+    centerText("📈 Historique des mesures")
 
     paris = pytz.timezone("Europe/Paris")
 
@@ -20,7 +21,10 @@ def renderHistorical(db, context):
         st.session_state.show_graph = False
 
     # --- Sélecteur de variable ---
-    st.selectbox(
+    _,col1,_ = st.columns([1,5,1,])
+    
+    with col1:
+        st.selectbox(
         "Choisissez une variable :", 
         list(context.keys()), 
         index=list(context.keys()).index(st.session_state.variable),
@@ -28,7 +32,7 @@ def renderHistorical(db, context):
     )
 
     # --- Sélecteurs de dates ---
-    col1, col2 = st.columns(2)
+    _,col1,col2,_ = st.columns([1,3,3,1])
     with col1:
         start_date = st.date_input("Date de début", st.session_state.start_datetime.date())
         start_time = st.time_input("Heure de début", st.session_state.start_datetime.time())
@@ -97,4 +101,8 @@ def renderHistorical(db, context):
         )
 
         st.altair_chart(chart, use_container_width=True)
-        st.dataframe(df)
+
+
+        _,col1,_ = st.columns([3,3,3])
+        with col1:
+            st.dataframe(df)

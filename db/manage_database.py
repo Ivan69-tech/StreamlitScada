@@ -52,3 +52,11 @@ class PostgresDB:
         if self.conn:
             self.conn.close()
         print("Connexion fermée")
+    
+    def is_connected(self):
+        try:
+            with self.conn.cursor() as cur:
+                cur.execute("SELECT 1")
+            return True
+        except Exception:
+            return False
