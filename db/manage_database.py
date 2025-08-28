@@ -50,6 +50,7 @@ class PostgresDB:
             self.ensure_connection()
             self.cursor.execute(query, params)
             result = self.cursor.fetchall()
+            print("requete ok")
             return result
         except Exception as e:
             print("Erreur lors de l’exécution de la requête :", e)

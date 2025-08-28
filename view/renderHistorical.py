@@ -18,11 +18,7 @@ def renderHistorical(db, context):
         st.session_state.end_datetime = datetime.now(paris)
     if "show_graph" not in st.session_state:
         st.session_state.show_graph = False
-    
-    # AJOUT : Nettoyage automatique des anciennes données
-    if "graph_data" in st.session_state:
-        del st.session_state.graph_data
-    
+        
     # --- Sélecteur de variable ---
     _,col1,_ = st.columns([1,5,1,])
     with col1:
@@ -46,56 +42,68 @@ def renderHistorical(db, context):
     st.session_state.start_datetime = paris.localize(datetime.combine(start_date, start_time))
     st.session_state.end_datetime = paris.localize(datetime.combine(end_date, end_time))
     
-    # AJOUT : Validation de la plage de dates
-    time_diff = st.session_state.end_datetime - st.session_state.start_datetime
-    if time_diff.days > 7:
-        st.warning("⚠️ Période limitée à 7 jours maximum pour éviter les problèmes de performance.")
-        return
     
     # --- Bouton tracer ---
     col1, col2 = st.columns([1, 1])
     with col1:
         if st.button("Tracer"):
             st.session_state.show_graph = True
+            # Invalider le cache pour forcer une nouvelle requête
+            st.session_state.pop("graph_cache", None)
     with col2:
         if st.button("Effacer"):
             st.session_state.show_graph = False
-            if "graph_data" in st.session_state:
-                del st.session_state.graph_data
+            st.session_state.pop("graph_cache", None)
             st.rerun()
-    
+
+    # Préparer une clé de cache basée sur les paramètres
+    cache_key = None
+    if st.session_state.show_graph:
+        cache_key = (
+            st.session_state.variable,
+            st.session_state.start_datetime.isoformat(),
+            st.session_state.end_datetime.isoformat(),
+        )
+
     # --- Affichage du graphe si demandé ---
     if st.session_state.show_graph:
-        # Conversion des bornes vers UTC pour la requête
-        start_utc = st.session_state.start_datetime.astimezone(pytz.UTC)
-        end_utc = st.session_state.end_datetime.astimezone(pytz.UTC)
-        
-        # AJOUT : Limitation du nombre de points
-        query = f"""
-        SELECT timestamp, {st.session_state.variable}
-        FROM context
-        WHERE timestamp BETWEEN %s AND %s
-        ORDER BY timestamp ASC
-        LIMIT 1000
-        """
-        
-        with st.spinner("Chargement des données..."):
-            rows = db.execute_query(query, (start_utc, end_utc))
-        
-        if not rows:
-            st.warning("⚠️ Aucune donnée trouvée pour cette période.")
-            return
-        
-        # MODIF : Ne pas stocker le DataFrame dans session_state
-        df = pd.DataFrame(rows, columns=["timestamp", st.session_state.variable])
-        
-        # Conversion UTC -> Europe/Paris pour affichage
-        df["timestamp"] = (
-            pd.to_datetime(df["timestamp"], utc=True)
-            .dt.tz_convert("Europe/Paris")
-            .dt.tz_localize(None)
-        )
-        
+        # Si présent en cache et clé identique, réutiliser
+        if "graph_cache" in st.session_state and st.session_state.graph_cache.get("key") == cache_key:
+            df = st.session_state.graph_cache["df"]
+        else:
+            # Conversion des bornes vers UTC pour la requête
+            start_utc = st.session_state.start_datetime.astimezone(pytz.UTC)
+            end_utc = st.session_state.end_datetime.astimezone(pytz.UTC)
+            
+            # AJOUT : Limitation du nombre de points
+            query = f"""
+            SELECT timestamp, {st.session_state.variable}
+            FROM context
+            WHERE timestamp BETWEEN %s AND %s
+            ORDER BY timestamp ASC
+            LIMIT 1000
+            """
+            
+            with st.spinner("Chargement des données..."):
+                rows = db.execute_query(query, (start_utc, end_utc))
+            
+            if not rows:
+                st.warning("⚠️ Aucune donnée trouvée pour cette période.")
+                return
+            
+            # Construire le DataFrame
+            df = pd.DataFrame(rows, columns=["timestamp", st.session_state.variable])
+            
+            # Conversion UTC -> Europe/Paris pour affichage
+            df["timestamp"] = (
+                pd.to_datetime(df["timestamp"], utc=True)
+                .dt.tz_convert("Europe/Paris")
+                .dt.tz_localize(None)
+            )
+            
+            # Stocker en cache
+            st.session_state.graph_cache = {"key": cache_key, "df": df}
+
         # AJOUT : Information sur le nombre de points
         st.info(f"📊 {len(df)} points de données chargés")
         

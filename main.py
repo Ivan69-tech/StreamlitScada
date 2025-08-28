@@ -31,8 +31,6 @@ generalStyle()
 render_title()
 
 
-print(datetime.now())
-
 if "smt" not in st.session_state:
         st.session_state["smt"] = SMT(newContext())
 
