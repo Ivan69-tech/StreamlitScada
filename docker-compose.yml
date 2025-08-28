@@ -12,7 +12,7 @@ services:
     image: my-streamlit-app  # dossier contenant le Dockerfile Streamlit
     container_name: streamlit-app
     ports:
-      - "8501:8501"              # expose Streamlit sur l'hôte
+      - "8503:8501"              # expose Streamlit sur l'hôte
     networks:
       - net
     depends_on:
@@ -37,6 +37,16 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     command: postgres -c wal_level=logical -c max_replication_slots=4 -c max_wal_senders=4 -c listen_addresses='*'
+  
+  grafana:
+    image: grafana/grafana-oss:8.4.3
+    container_name: grafana
+    volumes:
+      - grafana-storage:/var/lib/grafana:rw
+    ports:
+      - "3000:3000"
+    networks:
+      - net
 
 
 networks:
@@ -45,3 +55,4 @@ networks:
 
 volumes:
   postgres_data:
+  grafana-storage:

@@ -74,6 +74,10 @@ def RenderControl():
             soc = st.session_state.smt.soc[-1]
             Px = st.session_state.smt.P_kW[-1]
             Qx = st.session_state.smt.Q_kVar[-1]
+            centerText(
+                f"BESS State : "
+                f"{'🟢' if st.session_state.smt.state[-1] == 4 else '🔴' if st.session_state.smt.state[-1] == 1 else '⚪'}"
+            )
             centerText(f"State of Charge : {soc}% 🔋")
             centerText(f"Bess Active Power : {Px/1000} kW")
             centerText(f"Bess Reactive Power : {Qx/1000} kVar")

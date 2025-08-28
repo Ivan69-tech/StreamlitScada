@@ -6,6 +6,12 @@ import pytz
 from view.htmlFunctions.center import centerText
 
 def renderHistorical(db, context):
+    
+    
+    _, col, _ = st.columns([3,2,3])
+    with col :
+        st.link_button("Go to grafana", "https://grafana.ivan-app.fr", use_container_width=True)    
+    
     centerText("📈 Historique des mesures")
     paris = pytz.timezone("Europe/Paris")
     
@@ -44,19 +50,18 @@ def renderHistorical(db, context):
     
     
     # --- Bouton tracer ---
-    col1, col2 = st.columns([1, 1])
+    _, col1, col2, _ = st.columns([3, 1, 1, 3])
     with col1:
-        if st.button("Tracer"):
+        if st.button("Tracer", use_container_width=True):
             st.session_state.show_graph = True
             # Invalider le cache pour forcer une nouvelle requête
             st.session_state.pop("graph_cache", None)
     with col2:
-        if st.button("Effacer"):
+        if st.button("Effacer", use_container_width=True):
             st.session_state.show_graph = False
             st.session_state.pop("graph_cache", None)
             st.rerun()
 
-    # Préparer une clé de cache basée sur les paramètres
     cache_key = None
     if st.session_state.show_graph:
         cache_key = (
