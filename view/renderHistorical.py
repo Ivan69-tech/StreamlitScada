@@ -10,7 +10,8 @@ def renderHistorical(db, context):
     
     _, col, _ = st.columns([3,2,3])
     with col :
-        st.link_button("Go to grafana", "https://grafana.ivan-app.fr", use_container_width=True)    
+        st.link_button("Go to grafana", "https://grafana.ivan-app.fr", use_container_width=True)
+        st.write("On peut se connecter via admin/admin puis Browse Dashboards")    
     
     centerText("📈 Historique des mesures")
     paris = pytz.timezone("Europe/Paris")
